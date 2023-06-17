@@ -10,12 +10,16 @@ import {
   Legend,
   ResponsiveContainer
 } from "recharts";
+import {Map, MapMarker, MapInfoWindow} from 'react-kakao-maps-sdk';
 
+const apiKey="221d085dfdb608ad8a95134f0e47c3b7"
 const seoul = [
   { siDo: 11, goGun: 680, name: '강남구' },
   { siDo: 11, goGun: 440, name: '마포구' },
   { siDo: 11, goGun: 110, name: '종로구' }
 ]
+
+
 
 const years=[2021, 2020, 2019];
 
@@ -27,13 +31,11 @@ function fetchData(city, year){
   const pageNo=1;
   const promise = fetch(`${endPoint}?serviceKey=${serviceKey}&searchYearCd=${year}&siDo=${city.siDo}&guGun=${city.goGun}&type=${type}&numOfRows=${numOfRows}&pageNo=${pageNo}`)
    .then((res)=>{
-     console.log(res)
     if(!res.ok){
       throw res;
     }
     return res.json();
    })
-   console.log(promise);
 
    return promise;
 
@@ -42,6 +44,7 @@ function fetchData(city, year){
 export default function App(){
   const [year, setYear] = useState(years[0]);
   const [city, setCity] = useState(seoul[0]);
+
 
   return(
     <>
@@ -84,20 +87,26 @@ function Dashboard({city, year}){
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(null);
   
-  useEffect(()=>{
+  useEffect(() => {
 
-    setIsLoaded(false);
+    // 서버에 요청하기 전 사용자에게 대기 상태를 먼저 보여주어야 한다
+    setIsLoaded(false); 
     setError(null);
 
-    fetchData(city, year)
-      .then(data =>{
-        setData(data);
-      })
-      .catch(error=>{
-        setError(error);
-      })
-      .finally(()=>setIsLoaded(true));
-  },[city, year])
+    
+
+      // fetchData함수에 city와 year 변수를 전달한다
+      fetchData(city, year)
+        .then(data => {
+          console.log(data)
+          setData(data);
+        })
+        .catch(error => {
+          setError(error);
+        })
+        .finally(() => setIsLoaded(true)); // 성공 실패와 관계없이 서버가 응답하면 대기상태를 해제한다
+
+  }, [city, year])
 
   if(error){
     return <p>failed to fetch</p>
@@ -114,6 +123,7 @@ function Dashboard({city, year}){
       {data.totalCount>0?(
         <>
           <Rechart accidents = {data.items.item} />
+          <KakaoMap accidents= {data.items.item} />
         </>
       ) : (
         <p>자료가 없습니다</p>
@@ -125,7 +135,6 @@ function Dashboard({city, year}){
 }
 
 function Rechart({accidents}){
-  console.log(accidents);
 
   const chartData = accidents.map(accident=>{
     var x= accident.spot_nm.split(' ');
@@ -139,25 +148,25 @@ function Rechart({accidents}){
       중상자수 : accident.se_dnv_cnt
     }
   })
-  console.log(chartData)
 
   return(
-    <div style={{height:"300px"}}>
-      <ResponsiveContainer width="100%" height="100%">
+    <div style={{height:"350px"}}>
+      <ResponsiveContainer width="100%" height="90%">
         <BarChart
           width={500}
-          height={300}
+          height={250}
           data ={chartData}
           margin={{top:5, right:30, left:20, bottom:5}}
+          
         >
           <CartesianGrid strokeDasharray = "3 3" />
           <XAxis dataKey="name" tick={<CustomizedTick chartData={chartData} />} />
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="발생건수" fill="#0af" />
-          <Bar dataKey="사상자수" fill="#fa0" />
-          <Bar dataKey="중상자수" fill="#f00" />
+          <Bar dataKey="발생건수" fill="rgb(45 212 191)" />
+          <Bar dataKey="사상자수" fill="rgb(14 165 233)" />
+          <Bar dataKey="중상자수" fill="rgb(239 68 68)" />
 
         </BarChart>
 
@@ -169,22 +178,40 @@ function Rechart({accidents}){
 function CustomizedTick(props) {
   const { x, y, stroke, payload } = props;
 
-  let m = payload.value.match(/\((.*?)\)/);
-
-  console.log(m);
-
-  console.log(props)
-
+  console.log("payload.value : "+payload.value);
+  const m = payload.value.split("(")[0];
   return (
     <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={16} fill="#666">
-        <tspan textAnchor="middle" x="0">
-        {payload.value.split('(')[0]}
-        </tspan>
-        <tspan textAnchor="middle" x="0" dy="20">
-        ({m[1]})
+      <text x={0} y={0} dy={10} fill="#666">
+        <tspan textAnchor="middle" x="0" z-index={10} >
+        {m}
         </tspan>
       </text>
     </g>
+  )
+}
+
+function KakaoMap({ accidents }) {
+
+  // MapInfoWindow 컴포넌트를 재사용한다
+  const mapInfoWindows = accidents.map(accident => (
+    <MapInfoWindow
+      key={accident.la_crd}
+      position={{ lat: accident.la_crd, lng: accident.lo_crd }}
+      removable={true}
+    >
+      <div style={{ padding: "5px", color: "#000" }}>
+        {accident.spot_nm.split(' ')[2]}
+      </div>
+    </MapInfoWindow>
+  ))
+  return (
+    <Map
+      center={{ lat: accidents[0].la_crd, lng: accidents[0].lo_crd }}
+      style={{ width: "90%", height: "400px" }}
+      level={5}
+    >
+      {mapInfoWindows}
+    </Map>
   )
 }
