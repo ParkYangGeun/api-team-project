@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/api-team-project/static/css/main.4b70afda.css",
+    "main.js": "/api-team-project/static/js/main.c9f619c5.js",
+    "index.html": "/api-team-project/index.html",
+    "main.4b70afda.css.map": "/api-team-project/static/css/main.4b70afda.css.map",
+    "main.c9f619c5.js.map": "/api-team-project/static/js/main.c9f619c5.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4b70afda.css",
+    "static/js/main.c9f619c5.js"
+  ]
+}
