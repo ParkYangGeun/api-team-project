@@ -1,67 +1,71 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import './App.css';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer
-} from "recharts";
-import {Map, MapMarker, MapInfoWindow} from 'react-kakao-maps-sdk';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useParams } from 'react-router-dom'
+import Jaywalking from './Jaywalking';
+import Old_dashboard from './Old_dashboard'
+import Home from './page/Home';
+import Bicycle from './Bicycle';
 
-const apiKey="221d085dfdb608ad8a95134f0e47c3b7"
 const seoul = [
-  { siDo: 11, goGun: 680, name: '강남구' },
-  { siDo: 11, goGun: 440, name: '마포구' },
-  { siDo: 11, goGun: 110, name: '종로구' }
+  {id:1, siDo: 11, goGun: 680, name: '강남구' },
+  {id:2, siDo: 11, goGun: 440, name: '마포구' },
+  {id:3, siDo: 11, goGun: 110, name: '종로구' }
 ]
 
-
-
-const years=[2021, 2020, 2019];
-
-function fetchData(city, year){
-  const endPoint = "http://apis.data.go.kr/B552061/frequentzoneOldman/getRestFrequentzoneOldman"
-  const serviceKey = "vHN3CmQObdz9uQeokvcdspXwOzoQdbGAFdD2VOnD6YX%2BtyCoBz5IJsZJd6obmtIXgnoNwl3BWRQXU3RFbUChnw%3D%3D"
-  const type ='json';
-  const numOfRows=10;
-  const pageNo=1;
-  const promise = fetch(`${endPoint}?serviceKey=${serviceKey}&searchYearCd=${year}&siDo=${city.siDo}&guGun=${city.goGun}&type=${type}&numOfRows=${numOfRows}&pageNo=${pageNo}`)
-   .then((res)=>{
-    if(!res.ok){
-      throw res;
-    }
-    return res.json();
-   })
-
-   return promise;
-
-}
+const years=[2020, 2019, 2018];
 
 export default function App(){
   const [year, setYear] = useState(years[0]);
   const [city, setCity] = useState(seoul[0]);
 
-
   return(
-    <>
+    <Router>
       <nav>
-        <h1>
-          보행노인사고다발지역정보서비스
-        </h1>
+        <Link to="/">
+          <div className='home_btn'>
+          <svg className='home_logo' xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512"><path d="M380.8 416c41.5-40.7 67.2-97.3 67.2-160C448 132.3 347.7 32 224 32S0 132.3 0 256S100.3 480 224 480H544c17.7 0 32-14.3 32-32s-14.3-32-32-32H380.8zM224 160a96 96 0 1 1 0 192 96 96 0 1 1 0-192zm64 96a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z"/></svg>Home
+          </div>
+        </Link>
+        
+        <ul>
+          <li className='nav_li'>
+            <Link to="/old_dashboard">
+              <h2>
+              보행노인사고다발지역정보서비스
+              </h2>
+            </Link>
+          </li>
+          <li className='nav_li'>
+            <Link to="/jaywalking">
+              <h2>
+              보행자무단횡단사고조회서비스
+              
+              </h2>
+            </Link>
+          </li>
+          <li className='nav_li'>
+            <Link to="/bicycle">
+              <h2>
+              자전거사고조회서비스
+              
+              </h2>
+            </Link>
+          </li>
+        </ul>
+        
         <section>
           <h3>서울</h3>
-          {seoul.map(city =>(
-            <button
-              key={city.id}
-              onClick={()=>setCity(city)}
-            >
-              {city.name}
-            </button>
-          ))}
+          <div className='city_btn_wrap'>
+            {seoul.map(city =>(
+              <button
+                className='city_select_btn'
+                key={city.id}
+                onClick={()=>setCity(city)}
+              >
+                {city.name}
+              </button>
+            ))}
+          </div>
         </section>
       </nav>
 
@@ -73,145 +77,14 @@ export default function App(){
             ))}
           </select>
         </div>
-
-        <Dashboard city={city} year={year}/>
+        <Routes>
+          <Route path ="/" element={<Home city={city} year={year}/>}></Route>
+          <Route path="/old_dashboard" element={<Old_dashboard city={city} year={year}/>}></Route>
+          {/* <Old_dashboard city={city} year={year}/> */}
+          <Route path="/jaywalking" element={<Jaywalking city={city} year={year} />}></Route>
+          <Route path="/bicycle" element={<Bicycle city={city} year={year} />}></Route>
+        </Routes>
       </main>
-    </>
-
-  )
-}
-
-function Dashboard({city, year}){
-
-  const [data, setData] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [error, setError] = useState(null);
-  
-  useEffect(() => {
-
-    // 서버에 요청하기 전 사용자에게 대기 상태를 먼저 보여주어야 한다
-    setIsLoaded(false); 
-    setError(null);
-
-    
-
-      // fetchData함수에 city와 year 변수를 전달한다
-      fetchData(city, year)
-        .then(data => {
-          console.log(data)
-          setData(data);
-        })
-        .catch(error => {
-          setError(error);
-        })
-        .finally(() => setIsLoaded(true)); // 성공 실패와 관계없이 서버가 응답하면 대기상태를 해제한다
-
-  }, [city, year])
-
-  if(error){
-    return <p>failed to fetch</p>
-  }
-
-  if(!isLoaded)
-  {
-    return <p>fetching data...</p>
-  }
-
-  return(
-    <>
-      <h1>{year}년 {city.name} 보행노인 사고다발지역</h1>
-      {data.totalCount>0?(
-        <>
-          <Rechart accidents = {data.items.item} />
-          <KakaoMap accidents= {data.items.item} />
-        </>
-      ) : (
-        <p>자료가 없습니다</p>
-      )}
-
-    </>
-
-  )
-}
-
-function Rechart({accidents}){
-
-  const chartData = accidents.map(accident=>{
-    var x= accident.spot_nm.split(' ');
-
-    var r = x.slice(2).join(" ");
-
-    return{
-      name : r,
-      발생건수 : accident.occrrnc_cnt,
-      사상자수 : accident.caslt_cnt,
-      중상자수 : accident.se_dnv_cnt
-    }
-  })
-
-  return(
-    <div style={{height:"350px"}}>
-      <ResponsiveContainer width="100%" height="90%">
-        <BarChart
-          width={500}
-          height={250}
-          data ={chartData}
-          margin={{top:5, right:30, left:20, bottom:5}}
-          
-        >
-          <CartesianGrid strokeDasharray = "3 3" />
-          <XAxis dataKey="name" tick={<CustomizedTick chartData={chartData} />} />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="발생건수" fill="rgb(45 212 191)" />
-          <Bar dataKey="사상자수" fill="rgb(14 165 233)" />
-          <Bar dataKey="중상자수" fill="rgb(239 68 68)" />
-
-        </BarChart>
-
-      </ResponsiveContainer>
-    </div>
-  )
-}
-
-function CustomizedTick(props) {
-  const { x, y, stroke, payload } = props;
-
-  console.log("payload.value : "+payload.value);
-  const m = payload.value.split("(")[0];
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={10} fill="#666">
-        <tspan textAnchor="middle" x="0" z-index={10} >
-        {m}
-        </tspan>
-      </text>
-    </g>
-  )
-}
-
-function KakaoMap({ accidents }) {
-
-  // MapInfoWindow 컴포넌트를 재사용한다
-  const mapInfoWindows = accidents.map(accident => (
-    <MapInfoWindow
-      key={accident.la_crd}
-      position={{ lat: accident.la_crd, lng: accident.lo_crd }}
-      removable={true}
-    >
-      <div style={{ padding: "5px", color: "#000" }}>
-        {accident.spot_nm.split(' ')[2]}
-      </div>
-    </MapInfoWindow>
-  ))
-  return (
-    <Map
-      center={{ lat: accidents[0].la_crd, lng: accidents[0].lo_crd }}
-      style={{ width: "90%", height: "400px" }}
-      level={5}
-    >
-      {mapInfoWindows}
-    </Map>
+    </Router>
   )
 }
