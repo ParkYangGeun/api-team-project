@@ -5,6 +5,7 @@ import Jaywalking from './Jaywalking';
 import Old_dashboard from './Old_dashboard'
 import Home from './page/Home';
 import Bicycle from './Bicycle';
+import Notfound from './page/Notfound';
 
 const seoul = [
   {id:1, siDo: 11, goGun: 680, name: '강남구' },
@@ -83,6 +84,7 @@ export default function App(){
           {/* <Old_dashboard city={city} year={year}/> */}
           <Route path="/jaywalking" element={<Jaywalking city={city} year={year} />}></Route>
           <Route path="/bicycle" element={<Bicycle city={city} year={year} />}></Route>
+          <Route path="/*" element={<Notfound />}></Route>
         </Routes>
       </main>
     </Router>
