@@ -1,4 +1,5 @@
 body {
+  
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -51,6 +52,8 @@ body{
 .city_btn_wrap{
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap:0.5rem;
 }
 
 .city_select_btn{
@@ -108,6 +111,9 @@ section{
 .notfound_page{
   margin-top:100px;
 }
+
+
+
 /* .recharts-wrapper{
   height:450px !important;
 } */

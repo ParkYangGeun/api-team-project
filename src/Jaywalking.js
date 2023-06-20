@@ -60,7 +60,7 @@ function fetchData(city, year) {
     return (
       <>
         <h1>
-          {year}년 {city.name} 무단횡단 사고조회 결과
+          {year}년 {city.name} 무단횡단 사고 조회 결과
         </h1>
         {data.totalCount > 0 ? (
           <>
@@ -79,11 +79,13 @@ function fetchData(city, year) {
     const chartData = accidents.map((accidents) => {
       var x = accidents.spot_nm.split(" ");
       // spot_nm : 다발지역 지점의 위치
-      
+      var n= accidents.spot_nm.split(" ")[2];
+      var na = n.split("(")[0];
       var r = x.slice(2).join(" ");
       total_occrrnc_count+=accidents.occrrnc_cnt;
       return {
-        name: r,
+        name: n,
+        na:na,
         발생건수: accidents.occrrnc_cnt,
         사망자수: accidents.dth_dnv_cnt,
         중상자수: accidents.se_dnv_cnt,
@@ -100,10 +102,7 @@ function fetchData(city, year) {
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="name"
-              tick={<CustomizedTick chartData={chartData} />}
-            />
+            <XAxis dataKey="na" tick={<CustomizedTick chartData={chartData} />} />
             <YAxis />
             <Tooltip />
             <Legend />

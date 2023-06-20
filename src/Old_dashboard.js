@@ -66,7 +66,7 @@ export default function Old_dashboard({city, year}){
   
     return(
       <>
-        <h1>{year}년 {city.name} 보행노인 사고다발지역</h1>
+        <h1>{year}년 {city.name} 보행노인 사고 조회 결과</h1>
         {data.totalCount>0?(
           <>
             <Rechart accidents = {data.items.item} city={city} />
@@ -83,13 +83,14 @@ export default function Old_dashboard({city, year}){
       var total_occrrnc_count = 0;
 
     const chartData = accidents.map(accident=>{
-      var x= accident.spot_nm.split(' ');
+      var n= accident.spot_nm.split(" ")[2];
+      var na = n.split("(")[0];
         
-      var r = x.slice(2).join(" ");
         total_occrrnc_count+=accident.occrrnc_cnt;
         
       return{
-        name : r,
+        name: n,
+        na:na,
         발생건수 : accident.occrrnc_cnt,
         사상자수 : accident.caslt_cnt,
         중상자수 : accident.se_dnv_cnt,
@@ -107,7 +108,7 @@ export default function Old_dashboard({city, year}){
             
           >
             <CartesianGrid strokeDasharray = "3 3" />
-            <XAxis dataKey="name" tick={<CustomizedTick chartData={chartData} />} />
+            <XAxis dataKey="na" tick={<CustomizedTick chartData={chartData} />} />
             <YAxis />
             <Tooltip />
             <Legend />
@@ -127,10 +128,10 @@ export default function Old_dashboard({city, year}){
   }
   
   function CustomizedTick(props) {
-    const { x, y, stroke, payload } = props;
+    const { x, y, payload } = props;
   
     // console.log("payload.value : "+payload.value);
-    const m = payload.value.split("(")[0];
+    const m = payload.value;
     return (
       <g transform={`translate(${x},${y})`}>
         <text x={0} y={0} dy={10} fill="#666">
@@ -142,29 +143,35 @@ export default function Old_dashboard({city, year}){
     )
   }
   
-  function KakaoMap({ accidents }) {
+  const KakaoMap = ({ accidents }) => {
+    const locations = accidents.map((acc) => {
+      return {
+        title: acc.spot_nm,
+        latlng: { lat: Number(acc.la_crd), lng: Number(acc.lo_crd) },
+      };
+    });
   
-    // MapInfoWindow 컴포넌트를 재사용한다
-    const mapInfoWindows = accidents.map(accident => (
-      <MapInfoWindow
-        key={accident.la_crd}
-        position={{ lat: accident.la_crd, lng: accident.lo_crd }}
-        removable={true}
-      >
-        <div style={{ padding: "5px", color: "#000" }}>
-          {accident.spot_nm.split(' ')[2]}
-        </div>
-  
-      </MapInfoWindow>
-    ))
     return (
       <Map
         center={{ lat: accidents[0].la_crd, lng: accidents[0].lo_crd }}
         style={{ width: "90%", height: "400px", margin:"0 auto"  }}
         level={5}
       >
-        {mapInfoWindows}
+        {locations.map((loc, idx) => (
+          <MapMarker
+            key={`${loc.title}-${loc.latlng}`}
+            position={loc.latlng}
+            image={{
+              src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
+              size: { width: 24, height: 35 },
+            }}
+            title={loc.title}
+            >
+                <div style = {{padding: "5px", color:"#000"}}>
+                    {loc.title.split(' ')[2]}
+                </div>
+            </MapMarker>
+        ))}
       </Map>
-    )
-  }
-  
+    );
+  };

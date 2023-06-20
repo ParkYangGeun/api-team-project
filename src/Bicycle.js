@@ -83,6 +83,7 @@ export default function Bicycle({ city, year }) {
   );
 }
 
+
 // 리차트 (리액트 차트 라이브러리)
 function Rechart({ accidents, city }) {
     var total_occrrnc_count = 0;
@@ -91,15 +92,18 @@ function Rechart({ accidents, city }) {
   // 리차트가 요구하는 형식에 맞게 데이터를 구성한다
   const chartData = accidents.map((accident) => {
     var n= accident.spot_nm.split(" ")[2];
+    var na = n.split("(")[0];
     total_occrrnc_count+=accident.occrrnc_cnt;
     return {
-      name: accident.spot_nm.split(" ")[2],
+      na:na,
+      name: n,
       발생건수: accident.occrrnc_cnt,
       중상자수: accident.se_dnv_cnt,
       사망자수: accident.dth_dnv_cnt,
     };
   });
-
+  
+  const {data, tooltipForm} = {chartData};
   return (
     <div style={{ height: "350px" }}>
       <ResponsiveContainer width="100%" height="90%">
@@ -110,7 +114,7 @@ function Rechart({ accidents, city }) {
           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
+          <XAxis dataKey="na" tick={<CustomizedTick chartData={chartData} />} />
           <YAxis />
           <Tooltip />
           <Legend />
@@ -126,29 +130,54 @@ function Rechart({ accidents, city }) {
   );
 }
 
-// 카카오 지도
-function KakaoMap({ accidents }) {
 
-  // MapInfoWindow 컴포넌트를 재사용한다
-  const mapInfoWindows = accidents.map((accident) => (
-    <MapInfoWindow
-      key={accident.la_crd}
-      position={{ lat: accident.la_crd, lng: accident.lo_crd }}
-      removable={true}
-    >
-      <div style={{ padding: "5px", color: "#000" }}>
-        {accident.spot_nm.split(" ")[2]}
-      </div>
-    </MapInfoWindow>
-  ));
+
+
+function CustomizedTick(props) {
+  const { x, y, payload } = props;
+
+  // console.log("payload.value : "+payload.value);
+  const m = payload.value;
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text x={0} y={0} dy={10} fill="#666">
+        <tspan textAnchor="middle" x="0" z-index={10} >
+        {m}
+        </tspan>
+      </text>
+    </g>
+  )
+}
+// 카카오 지도
+const KakaoMap = ({ accidents }) => {
+  const locations = accidents.map((acc) => {
+    return {
+      title: acc.spot_nm,
+      latlng: { lat: Number(acc.la_crd), lng: Number(acc.lo_crd) },
+    };
+  });
 
   return (
     <Map
       center={{ lat: accidents[0].la_crd, lng: accidents[0].lo_crd }}
-      style={{ width: "90%", height: "400px", margin:"0 auto" }}
+      style={{ width: "90%", height: "400px", margin:"0 auto"  }}
       level={5}
     >
-      {mapInfoWindows}
+      {locations.map((loc, idx) => (
+        <MapMarker
+          key={`${loc.title}-${loc.latlng}`}
+          position={loc.latlng}
+          image={{
+            src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
+            size: { width: 24, height: 35 },
+          }}
+          title={loc.title}
+          >
+              <div style = {{padding: "5px", color:"#000"}}>
+                  {loc.title.split(' ')[2]}
+              </div>
+          </MapMarker>
+      ))}
     </Map>
   );
-}
+};
