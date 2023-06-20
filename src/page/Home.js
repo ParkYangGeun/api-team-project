@@ -3,7 +3,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
 function fetchData_jay(city, year) {
     const endPoint =
-      "http://apis.data.go.kr/B552061/jaywalking/getRestJaywalking";
+      "https://apis.data.go.kr/B552061/jaywalking/getRestJaywalking";
     const serviceKey =
       "bRXvGfPFqaKAt4g0bX4hMi31yLKjJGsTKY0gkDEs5VDmSKDuqcGCvBb2hRh4gDuimUQ4XijFIYXwYTLo7gsidA%3D%3D";
     const type = "json";
@@ -23,7 +23,7 @@ function fetchData_jay(city, year) {
   }
 
   function fetchData_old(city, year){
-    const endPoint = "http://apis.data.go.kr/B552061/frequentzoneOldman/getRestFrequentzoneOldman"
+    const endPoint = "https://apis.data.go.kr/B552061/frequentzoneOldman/getRestFrequentzoneOldman"
     const serviceKey = "vHN3CmQObdz9uQeokvcdspXwOzoQdbGAFdD2VOnD6YX%2BtyCoBz5IJsZJd6obmtIXgnoNwl3BWRQXU3RFbUChnw%3D%3D"
     const type ='json';
     const numOfRows=10;
@@ -41,7 +41,7 @@ function fetchData_jay(city, year) {
 
   function fetchData_bicycle(city, year){
     const endPoint =
-    "http://apis.data.go.kr/B552061/frequentzoneBicycle/getRestFrequentzoneBicycle";
+    "https://apis.data.go.kr/B552061/frequentzoneBicycle/getRestFrequentzoneBicycle";
   const serviceKey =
     "CrOh%2FMB81HKw7N499livS0S7b8f6yqeJlvFpDzmjhPr8a7HVkD%2BXB%2Bq96iiK7xQNuf%2FUmvIofCxXYBimO0TgXA%3D%3D";
     const type ='json';

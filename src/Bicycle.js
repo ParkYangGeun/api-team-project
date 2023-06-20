@@ -14,7 +14,7 @@ import {
 
 function fetchData(city, year) {
   const endPoint =
-    "http://apis.data.go.kr/B552061/frequentzoneBicycle/getRestFrequentzoneBicycle";
+    "https://apis.data.go.kr/B552061/frequentzoneBicycle/getRestFrequentzoneBicycle";
   const serviceKey =
     "CrOh%2FMB81HKw7N499livS0S7b8f6yqeJlvFpDzmjhPr8a7HVkD%2BXB%2Bq96iiK7xQNuf%2FUmvIofCxXYBimO0TgXA%3D%3D";
   const type = "json";

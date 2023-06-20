@@ -12,7 +12,7 @@ import {
   import {Map, MapMarker, MapInfoWindow} from 'react-kakao-maps-sdk';
 
 function fetchData(city, year){
-    const endPoint = "http://apis.data.go.kr/B552061/frequentzoneOldman/getRestFrequentzoneOldman"
+    const endPoint = "https://apis.data.go.kr/B552061/frequentzoneOldman/getRestFrequentzoneOldman"
     const serviceKey = "vHN3CmQObdz9uQeokvcdspXwOzoQdbGAFdD2VOnD6YX%2BtyCoBz5IJsZJd6obmtIXgnoNwl3BWRQXU3RFbUChnw%3D%3D"
     const type ='json';
     const numOfRows=10;

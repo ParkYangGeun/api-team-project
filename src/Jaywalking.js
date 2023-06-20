@@ -14,7 +14,7 @@ import {
   
 function fetchData(city, year) {
     const endPoint =
-      "http://apis.data.go.kr/B552061/jaywalking/getRestJaywalking";
+      "https://apis.data.go.kr/B552061/jaywalking/getRestJaywalking";
     const serviceKey =
       "bRXvGfPFqaKAt4g0bX4hMi31yLKjJGsTKY0gkDEs5VDmSKDuqcGCvBb2hRh4gDuimUQ4XijFIYXwYTLo7gsidA%3D%3D";
     const type = "json";
