@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/api-team-project/static/css/main.bcb461df.css",
-    "main.js": "/api-team-project/static/js/main.6281a6af.js",
+    "main.js": "/api-team-project/static/js/main.544023a0.js",
     "index.html": "/api-team-project/index.html",
     "main.bcb461df.css.map": "/api-team-project/static/css/main.bcb461df.css.map",
-    "main.6281a6af.js.map": "/api-team-project/static/js/main.6281a6af.js.map"
+    "main.544023a0.js.map": "/api-team-project/static/js/main.544023a0.js.map"
   },
   "entrypoints": [
     "static/css/main.bcb461df.css",
-    "static/js/main.6281a6af.js"
+    "static/js/main.544023a0.js"
   ]
 }
