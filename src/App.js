@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation, useParams } from 'react-router-dom'
+import { HashRouter as Router, Routes, Route, Link, useLocation, useParams } from 'react-router-dom'
 import Jaywalking from './Jaywalking';
 import Old_dashboard from './Old_dashboard'
 import Home from './page/Home';
